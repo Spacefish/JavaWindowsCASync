@@ -55,7 +55,6 @@ namespace JavaWindowsCASync
                 }
             }
             
-            string javaHome = "";
             var store = new X509Store(StoreName.Root, StoreLocation.LocalMachine);
             RSACryptoServiceProvider.UseMachineKeyStore = true;
             store.Open(OpenFlags.ReadOnly | OpenFlags.IncludeArchived);
@@ -66,10 +65,16 @@ namespace JavaWindowsCASync
                     Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                     cert.Thumbprint + ".cer"
                 );
+
+                Console.WriteLine("Processing cert: " + cert.Subject);
                 File.WriteAllBytes(certTempFile, certData);
-                Process p = Process.Start(@"C:\Program Files (x86)\Java\jre1.8.0_45\bin\keytool.exe", "-importcert -file " + certTempFile + " -keystore keystore.jks -storepass changeit -alias " + cert.Thumbprint + " -noprompt");
-                p.WaitForExit();
-                Console.WriteLine(cert.Subject);
+
+                foreach (string keyStoreFile in keyStoreFiles)
+                {
+                    Process p = Process.Start(@"C:\Program Files (x86)\Java\jre1.8.0_45\bin\keytool.exe", "-importcert -file " + certTempFile + " -keystore \"" + keyStoreFile + "\" -storepass changeit -alias " + cert.Thumbprint + " -noprompt");
+                    p.WaitForExit();
+                }
+                File.Delete(certTempFile);
             }
             Console.ReadKey();
         }
