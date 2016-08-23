@@ -71,8 +71,22 @@ namespace JavaWindowsCASync
 
                 foreach (string keyStoreFile in keyStoreFiles)
                 {
-                    Process p = Process.Start(@"C:\Program Files (x86)\Java\jre1.8.0_45\bin\keytool.exe", "-importcert -file " + certTempFile + " -keystore \"" + keyStoreFile + "\" -storepass changeit -alias " + cert.Thumbprint + " -noprompt");
+                    Process p = new Process();
+                    p.StartInfo = new ProcessStartInfo(@"C:\Program Files (x86)\Java\jre1.8.0_45\bin\keytool.exe", "-import -trustcacerts -file " + certTempFile + " -keystore \"" + keyStoreFile + "\" -storepass changeit -alias " + cert.Thumbprint + " -noprompt");
+                    p.StartInfo.CreateNoWindow = true;
+                    p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.RedirectStandardOutput = true;
+                    p.StartInfo.RedirectStandardError = true;
+                    p.Start();
                     p.WaitForExit();
+                    while(!p.StandardOutput.EndOfStream)
+                    {
+                        Console.WriteLine(p.StandardOutput.ReadLine());
+                    }
+                    while (!p.StandardError.EndOfStream)
+                    {
+                        Console.WriteLine(p.StandardError.ReadLine());
+                    }
                 }
                 File.Delete(certTempFile);
             }
