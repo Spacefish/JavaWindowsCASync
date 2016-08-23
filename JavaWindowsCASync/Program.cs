@@ -73,8 +73,9 @@ namespace JavaWindowsCASync
                 {
                     string keytoolPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(keyStoreFile)));
                     keytoolPath = Path.Combine(keytoolPath, "bin" + Path.DirectorySeparatorChar + "keytool.exe");
+                    string alias = "autoimport_" + cert.Thumbprint;
                     Process p = new Process();
-                    p.StartInfo = new ProcessStartInfo(keytoolPath, "-import -trustcacerts -file " + certTempFile + " -keystore \"" + keyStoreFile + "\" -storepass changeit -alias " + cert.Thumbprint + " -noprompt");
+                    p.StartInfo = new ProcessStartInfo(keytoolPath, "-import -trustcacerts -file " + certTempFile + " -keystore \"" + keyStoreFile + "\" -storepass changeit -alias " + alias + " -noprompt");
                     p.StartInfo.CreateNoWindow = true;
                     p.StartInfo.UseShellExecute = false;
                     p.StartInfo.RedirectStandardOutput = true;
@@ -92,6 +93,9 @@ namespace JavaWindowsCASync
                 }
                 File.Delete(certTempFile);
             }
+
+            Console.WriteLine(" ==== READY ==== ");
+
             Console.ReadKey();
         }
     }
