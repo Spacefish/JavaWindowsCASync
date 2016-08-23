@@ -71,8 +71,10 @@ namespace JavaWindowsCASync
 
                 foreach (string keyStoreFile in keyStoreFiles)
                 {
+                    string keytoolPath = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(keyStoreFile)));
+                    keytoolPath = Path.Combine(keytoolPath, "bin" + Path.DirectorySeparatorChar + "keytool.exe");
                     Process p = new Process();
-                    p.StartInfo = new ProcessStartInfo(@"C:\Program Files (x86)\Java\jre1.8.0_45\bin\keytool.exe", "-import -trustcacerts -file " + certTempFile + " -keystore \"" + keyStoreFile + "\" -storepass changeit -alias " + cert.Thumbprint + " -noprompt");
+                    p.StartInfo = new ProcessStartInfo(keytoolPath, "-import -trustcacerts -file " + certTempFile + " -keystore \"" + keyStoreFile + "\" -storepass changeit -alias " + cert.Thumbprint + " -noprompt");
                     p.StartInfo.CreateNoWindow = true;
                     p.StartInfo.UseShellExecute = false;
                     p.StartInfo.RedirectStandardOutput = true;
